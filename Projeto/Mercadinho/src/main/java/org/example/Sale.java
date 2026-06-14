@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Representa uma transação de venda realizada no sistema.
  * Esta classe gerencia a lista de itens, o cálculo do valor total,
- * a identificação do cliente (CPF) e a geração do cupom fiscal.
+ * a identificação do cliente (CPF) e a formatação do cupom fiscal.
  */
 public class Sale {
     private final String ID;
@@ -22,7 +22,7 @@ public class Sale {
      * Construtor para inicializar uma nova transação de venda.
      *
      * @param ID          O identificador único da venda.
-     * @param CPF         O número do CPF do cliente (validação esperada prévia).
+     * @param CPF         O número do CPF do cliente (apenas números).
      * @param paymentType O tipo de pagamento utilizado (ex: PIX, Débito).
      */
     public Sale(String ID, String CPF, String paymentType) {
@@ -33,11 +33,10 @@ public class Sale {
     }
 
     /**
-     * Adiciona um item à venda ou incrementa a quantidade se o produto já existir no carrinho.
-     * Atualiza o valor total da venda automaticamente.
+     * Adiciona um item à venda ou incrementa a quantidade se o produto já existir.
+     * Atualiza o valor total da transação automaticamente.
      *
-     * @param itemNovo O objeto {@link Item} a ser adicionado à lista de compras.
-     * @throws NullPointerException caso o parâmetro {@code itemNovo} seja nulo.
+     * @param itemNovo O objeto {@link Item} a ser adicionado.
      */
     public void sell(Item itemNovo) {
         for (int i = 0; i < Items.size(); i++) {
@@ -54,7 +53,7 @@ public class Sale {
 
     /**
      * Remove um item da lista de compras com base no código de barras.
-     * Atualiza o valor total da venda caso o item seja removido.
+     * Atualiza o valor total da venda caso a remoção seja bem-sucedida.
      *
      * @param barCode O código de barras do produto a ser removido.
      * @return {@code true} se o item foi encontrado e removido, {@code false} caso contrário.
@@ -71,56 +70,59 @@ public class Sale {
     }
 
     /**
-     * Retorna uma lista contendo os itens atuais da venda.
+     * Retorna uma cópia da lista de itens contidos nesta venda.
      *
-     * @return Uma nova lista contendo os itens do carrinho (cópia defensiva).
+     * @return Uma lista contendo os itens atuais da venda.
      */
     public List<Item> getItems() {
         return new ArrayList<>(Items);
     }
 
-    /**
-     * Obtém o valor total acumulado da venda.
-     *
-     * @return O valor total em reais (R$).
-     */
-    public double getTotal() {
-        return total;
-    }
+    /** @return O identificador único da venda. */
+    public String getID() { return ID; }
+
+    /** @return O CPF do cliente associado à venda. */
+    public String getCPF() { return CPF; }
+
+    /** @return O método de pagamento escolhido. */
+    public String getPaymentType() { return paymentType; }
+
+    /** @return A data e hora em que a venda foi realizada. */
+    public LocalDateTime getDateTime() { return dateTime; }
 
     /**
-     * Formata os dados da venda em um modelo de cupom fiscal (texto).
+     * Formata os dados da venda em um modelo de cupom fiscal para exibição.
      *
      * @return Uma {@link String} contendo o cupom fiscal formatado.
      */
     public String gerarNotaFiscal() {
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
         StringBuilder sb = new StringBuilder();
-        String linha = "=".repeat(45);
-        String linhaDivisoria = "-".repeat(45);
-        
+        String linha = "=".repeat(42);
+        String linhaDivisora = "-".repeat(42);
+
         sb.append(linha).append("\n");
-        sb.append("          MERCADINHO DO ZECA LTDA          \n");
-        sb.append("   AV. DA COMPUTACAO, 3o PERIODO - UNIT    \n");
+        sb.append("        MERCADINHO DO ZECA\n");
+        sb.append("      CNPJ: 40.028.922/0001-00\n");
+        sb.append("     Unit, 123 - Farolandia\n");
         sb.append(linha).append("\n");
-        sb.append(String.format("NOTA FISCAL - ID VENDA: #%s%n", ID));
-        sb.append(String.format("DATA/HORA: %s%n", fmt.format(dateTime)));
-        sb.append(String.format("CLIENTE CPF: %s%n", formatarCPF(CPF)));
-        sb.append(String.format("PAGAMENTO: %s%n", paymentType));
-        sb.append(linha).append("\n");
-        sb.append(String.format("%-25s %3s %14s%n", "PRODUTO", "QTD", "PRECO(R$)"));
-        sb.append(linhaDivisoria).append("\n");
+        sb.append(String.format("  Pedido: %-10s  %s%n", ID, fmt.format(dateTime)));
+        sb.append(String.format("  CPF: %s%n", formatarCPF(CPF)));
+        sb.append(String.format("  Pagamento: %s%n", paymentType));
+        sb.append(linhaDivisora).append("\n");
+        sb.append(String.format("  %-20s %5s %8s%n", "PRODUTO", "QTD", "SUBTOTAL"));
+        sb.append(linhaDivisora).append("\n");
 
         for (Item item : Items) {
-            String nomeProd = item.product().name();
-            if (nomeProd.length() > 24) nomeProd = nomeProd.substring(0, 21) + "...";
-            sb.append(String.format("%-25s %3d %14.2f%n", nomeProd, item.count(), item.subtotal()));
+            sb.append(String.format("  %-20s %5dx R$%6.2f%n",
+                    item.product().name(), item.count(), item.subtotal()));
+            sb.append(String.format("  %-26s R$%6.2f un%n", "", item.product().price()));
         }
 
         sb.append(linha).append("\n");
         sb.append(String.format("  TOTAL: R$ %.2f%n", total));
         sb.append(linha).append("\n");
-        sb.append("    Obrigado pela compra!\n");
+        sb.append("    Obrigado pela preferência!\n");
         sb.append("        Volte sempre! :)\n");
         sb.append(linha).append("\n");
 
@@ -128,14 +130,44 @@ public class Sale {
     }
 
     /**
-     * Aplica máscara de formatação a uma string de CPF.
+     * Aplica máscara de formatação (000.000.000-00) em uma string de CPF.
      *
-     * @param cpf O CPF como string de dígitos (apenas números).
-     * @return O CPF formatado (ex: 000.000.000-00), ou a string original caso inválida.
+     * @param cpf O CPF como string de dígitos.
+     * @return O CPF formatado ou a string original caso o formato seja inválido.
      */
     private String formatarCPF(String cpf) {
         if (cpf == null || cpf.length() != 11) return cpf;
         return cpf.substring(0, 3) + "." + cpf.substring(3, 6) + "." +
                 cpf.substring(6, 9) + "-" + cpf.substring(9);
+    }
+
+    /**
+     * Serializa a venda em formato de texto delimitado por ponto e vírgula para persistência.
+     *
+     * @return String formatada: ID;CPF;Pagamento;Total;Data;[Itens]
+     */
+    @Override
+    public String toString() {
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+        StringBuilder text = new StringBuilder();
+        text.append(ID).append(";")
+                .append(CPF).append(";")
+                .append(paymentType).append(";")
+                .append(String.format("%.2f", total)).append(";")
+                .append(fmt.format(dateTime)).append(";[");
+
+        int totalDeItens = this.Items.size();
+        for (int i = 0; i < totalDeItens; i++) {
+            Item itemAtual = this.Items.get(i);
+            text.append(itemAtual.product().name()).append("x").append(itemAtual.count());
+            if (i < totalDeItens - 1) text.append("|");
+        }
+        text.append("]");
+        return text.toString();
+    }
+
+    /** @return O valor total da venda. */
+    public double getTotal() { 
+        return this.total;
     }
 }
