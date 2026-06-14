@@ -1,0 +1,4 @@
+02;arroz;12.0;02arroz
+01;Feijao;12.0;01feijao
+7999;Arroz;9.0;02arroz
+03;Ponei;100.0;ponei

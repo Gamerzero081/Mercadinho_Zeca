@@ -1,0 +1,6 @@
+02;Arroz;8.0;02arroz
+01;Feijao;10.0;01feijao
+03;Ponei;150.0;ponei
+04;Ps5;2500.0;ps5
+05;Cheetos;10.0;cheetos
+06;Cama;150.0;cama

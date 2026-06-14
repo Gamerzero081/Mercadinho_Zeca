@@ -1,0 +1,5 @@
+e04b8;07293396538;cartão de débito;39.0;[Feijaox1|Arrozx1|Feijaox1|Feijaox1]
+05d5a;07293396538;pix;36.0;[Feijaox1|arrozx1|arrozx1]
+301ae;07293396538;a vista;60.0;[Feijaox1|arrozx1|arrozx1|arrozx1|Feijaox1]
+c7642;07293396538;crédito;45.0;[Feijaox1|Arrozx1|arrozx1|Feijaox1]
+1769a;07293396538;crédito;100.0;[Poneix1]

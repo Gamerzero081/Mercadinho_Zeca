@@ -1,0 +1,5 @@
+c5590;07293396538;débito;54,00;12/06/2026 00:46;[Arrozx3|Feijaox3]
+d7852;07293396538;crédito;354,00;12/06/2026 00:51;[Feijaox3|Arrozx3|Poneix2]
+2913a;07293396538;crédito;2834,00;12/06/2026 00:54;[Ps5x1|Arrozx3|Poneix2|Feijaox1]
+e3ecb;07293396538;crédito;224,00;12/06/2026 01:07;[Arrozx3|Feijaox1|Poneix1|Cheetosx4]
+224f3;07293396538;débito;806,00;12/06/2026 17:05;[Arrozx2|Camax2|Cheetosx2|Poneix3|Feijaox2]
