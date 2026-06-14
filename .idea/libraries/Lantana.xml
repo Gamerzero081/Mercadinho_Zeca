@@ -1,7 +1,7 @@
 <component name="libraryTable">
   <library name="Lantana">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/Teste/Lantana.jar!/" />
+      <root url="jar://$PROJECT_DIR$/bomba/Teste/Lantana.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
